@@ -85,8 +85,8 @@ class CITCulturaImportHandler extends SQLIImportAbstractHandler implements ISQLI
         
         $this->currentGUID = $remote_id = $row->id;
         
-        if ( trim( $row->classificationsIt ) != "Musei" )
-        {
+        //if ( trim( $row->classificationsIt ) != "Musei" )
+        //{
             $tipoLuogo = null;
             if ( $row->classificationsIt == 'Chiese' )
             {
@@ -108,6 +108,14 @@ class CITCulturaImportHandler extends SQLIImportAbstractHandler implements ISQLI
             {
                 $tipoLuogo = '775489';    
             }
+            elseif ( $row->classificationsIt == 'Natura' )
+            {
+                $tipoLuogo = '775489';    
+            }
+            elseif ( $row->classificationsIt == 'Musei' )
+            {
+                $tipoLuogo = '776927';    
+            }
             
             // Luoghi
             $contentOptions = new SQLIContentOptions( array(
@@ -116,54 +124,18 @@ class CITCulturaImportHandler extends SQLIImportAbstractHandler implements ISQLI
                 'language'              => 'ita-IT'
             ) );
             $content = SQLIContent::create( $contentOptions );
-            $content->fields->title = (string) $row->nameIt;		
-            $content->fields->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionIt );
-            $content->fields->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionIt );
-            $content->fields->image = self::getImage( (string) $row->pictureUrl );
-            $content->fields->indirizzo = (string) $row->address;
-            $content->fields->geo = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;
-            $content->fields->tipo_luogo = $tipoLuogo;
-            $content->fields->url = (string) $row->urlPage;
-            $content->fields->email = (string) $row->email;
-            $content->fields->telefono = (string) $row->phone;
-            
-            $content->addTranslation( 'eng-GB' );            
-            $content->fields['eng-GB']->title = (string) $row->nameEn;		
-            $content->fields['eng-GB']->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionEn );
-            $content->fields['eng-GB']->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionEn );
-            $content->fields['eng-GB']->image = self::getImage( (string) $row->pictureUrl );
-            $content->fields['eng-GB']->indirizzo = (string) $row->address;
-            $content->fields['eng-GB']->geo = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;
-            $content->fields['eng-GB']->tipo_luogo = $tipoLuogo;
-            $content->fields['eng-GB']->url = (string) $row->urlPage;
-            $content->fields['eng-GB']->email = (string) $row->email;
-            $content->fields['eng-GB']->telefono = (string) $row->phone;
-        }
-        else
-        {
-            $tipoServizio = null;
-            if ( $row->classificationsIt == 'Musei' )
-            {
-                $tipoServizio = '622571';    
-            }
-            
-            $contentOptions = new SQLIContentOptions( array(
-                'class_identifier'      => 'servizio_sul_territorio',
-                'remote_id'				=> $remote_id,
-                'language'              => 'ita-IT'
-            ) );
-            
-            $content = SQLIContent::create( $contentOptions );
             $content->fields->titolo = (string) $row->nameIt;		
             $content->fields->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionIt );
             $content->fields->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionIt );
             $content->fields->image = self::getImage( (string) $row->pictureUrl );
             $content->fields->indirizzo = (string) $row->address;
-            $content->fields->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;            
-            $content->fields->tipologia_servizio = $tipoServizio;
+            $content->fields->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;
+            $content->fields->tipo_luogo = $tipoLuogo;
             $content->fields->url = (string) $row->urlPage;
             $content->fields->email = (string) $row->email;
             $content->fields->telefono = (string) $row->phone;
+            $content->fields->contact_full_name = (string) $row->contactFullName;
+            $content->fields->info = SQLIContentUtils::getRichContent( (string) $row->infoIt );
             
             $content->addTranslation( 'eng-GB' );            
             $content->fields['eng-GB']->titolo = (string) $row->nameEn;		
@@ -172,12 +144,84 @@ class CITCulturaImportHandler extends SQLIImportAbstractHandler implements ISQLI
             $content->fields['eng-GB']->image = self::getImage( (string) $row->pictureUrl );
             $content->fields['eng-GB']->indirizzo = (string) $row->address;
             $content->fields['eng-GB']->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;
-            $content->fields->tipologia_servizio = $tipoServizio;
+            $content->fields['eng-GB']->tipo_luogo = $tipoLuogo;
             $content->fields['eng-GB']->url = (string) $row->urlPage;
             $content->fields['eng-GB']->email = (string) $row->email;
             $content->fields['eng-GB']->telefono = (string) $row->phone;
+            $content->fields['eng-GB']->contact_full_name = (string) $row->contactFullName;
+            $content->fields['eng-GB']->info = SQLIContentUtils::getRichContent( (string) $row->infoEn );
             
-        }
+            $content->addTranslation( 'ger-DE' );            
+            $content->fields['ger-DE']->titolo = (string) $row->nameDe;		
+            $content->fields['ger-DE']->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionDe );
+            $content->fields['ger-DE']->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionDe );
+            $content->fields['ger-DE']->image = self::getImage( (string) $row->pictureUrl );
+            $content->fields['ger-DE']->indirizzo = (string) $row->address;
+            $content->fields['ger-DE']->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;
+            $content->fields['ger-DE']->tipo_luogo = $tipoLuogo;
+            $content->fields['ger-DE']->url = (string) $row->urlPage;
+            $content->fields['ger-DE']->email = (string) $row->email;
+            $content->fields['ger-DE']->telefono = (string) $row->phone;
+            $content->fields['ger-DE']->contact_full_name = (string) $row->contactFullName;
+            $content->fields['ger-DE']->info = SQLIContentUtils::getRichContent( (string) $row->infoDe );
+        //}
+        //else
+        //{
+        //    $tipoServizio = null;
+        //    if ( $row->classificationsIt == 'Musei' )
+        //    {
+        //        $tipoServizio = '622571';    
+        //    }
+        //    
+        //    $contentOptions = new SQLIContentOptions( array(
+        //        'class_identifier'      => 'servizio_sul_territorio',
+        //        'remote_id'				=> $remote_id,
+        //        'language'              => 'ita-IT'
+        //    ) );
+        //    
+        //    $content = SQLIContent::create( $contentOptions );
+        //    $content->fields->titolo = (string) $row->nameIt;		
+        //    $content->fields->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionIt );
+        //    $content->fields->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionIt );
+        //    $content->fields->image = self::getImage( (string) $row->pictureUrl );
+        //    $content->fields->indirizzo = (string) $row->address;
+        //    $content->fields->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;            
+        //    $content->fields->tipologia_servizio = $tipoServizio;
+        //    $content->fields->url = (string) $row->urlPage;
+        //    $content->fields->email = (string) $row->email;
+        //    $content->fields->telefono = (string) $row->phone;
+        //    $content->fields->contact_full_name = (string) $row->contactFullName;
+        //    $content->fields->info = SQLIContentUtils::getRichContent( (string) $row->infoIt );
+        //    
+        //    $content->addTranslation( 'eng-GB' );            
+        //    $content->fields['eng-GB']->titolo = (string) $row->nameEn;		
+        //    $content->fields['eng-GB']->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionEn );
+        //    $content->fields['eng-GB']->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionEn );
+        //    $content->fields['eng-GB']->image = self::getImage( (string) $row->pictureUrl );
+        //    $content->fields['eng-GB']->indirizzo = (string) $row->address;
+        //    $content->fields['eng-GB']->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;
+        //    $content->fields['eng-GB']->tipologia_servizio = $tipoServizio;
+        //    $content->fields['eng-GB']->url = (string) $row->urlPage;
+        //    $content->fields['eng-GB']->email = (string) $row->email;
+        //    $content->fields['eng-GB']->telefono = (string) $row->phone;
+        //    $content->fields['eng-GB']->contact_full_name = (string) $row->contactFullName;
+        //    $content->fields['eng-GB']->info = SQLIContentUtils::getRichContent( (string) $row->infoEn );
+        //    
+        //    $content->addTranslation( 'ger-DE' );            
+        //    $content->fields['ger-DE']->titolo = (string) $row->nameDe;		
+        //    $content->fields['ger-DE']->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionDe );
+        //    $content->fields['ger-DE']->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionDe );
+        //    $content->fields['ger-DE']->image = self::getImage( (string) $row->pictureUrl );
+        //    $content->fields['ger-DE']->indirizzo = (string) $row->address;
+        //    $content->fields['ger-DE']->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->address;
+        //    $content->fields['ger-DE']->tipologia_servizio = $tipoServizio;
+        //    $content->fields['ger-DE']->url = (string) $row->urlPage;
+        //    $content->fields['ger-DE']->email = (string) $row->email;
+        //    $content->fields['ger-DE']->telefono = (string) $row->phone;
+        //    $content->fields['ger-DE']->contact_full_name = (string) $row->contactFullName;
+        //    $content->fields['ger-DE']->info = SQLIContentUtils::getRichContent( (string) $row->infoDe );
+        //    
+        //}
 
         $parentNodeId = $this->handlerConfArray['DefaultParentNodeID'];
         $content->addLocation( SQLILocation::fromNodeID( $parentNodeId ) );

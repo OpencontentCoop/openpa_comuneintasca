@@ -18,5 +18,19 @@
 #Subdir=templates
 #Match[class_identifier]=zona_comuneintasca
 
+[view_item_comuneintasca_query]
+Source=content/datatype/view/ezstring.tpl
+MatchFile=datatype/view/item_comuneintasca_query.tpl
+Subdir=templates
+Match[class_identifier]=item_comuneintasca
+Match[attribute_identifier]=query
+
+
+[edit_item_comuneintasca_query]
+Source=content/datatype/edit/ezstring.tpl
+MatchFile=datatype/edit/item_comuneintasca_query.tpl
+Subdir=templates
+Match[class_identifier]=item_comuneintasca
+Match[attribute_identifier]=query
 
 */ ?>

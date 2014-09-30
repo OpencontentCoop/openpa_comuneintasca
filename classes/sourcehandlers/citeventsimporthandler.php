@@ -88,6 +88,8 @@ class CITEventsImportHandler extends SQLIImportAbstractHandler implements ISQLII
 
         $this->currentGUID = $remote_id = $row->id;
         
+        $tipo = $this->getTipo( (string) $row->classificationsIt, (string) $row->classificationsEn, (string) $row->classificationsDe  );
+        
         $from = DateTime::createFromFormat( "d/m/Y H:i a O", (string) $row->startDate );
         $to = DateTime::createFromFormat( "d/m/Y H:i a O", (string) $row->endDate );
         
@@ -106,9 +108,10 @@ class CITEventsImportHandler extends SQLIImportAbstractHandler implements ISQLII
         $content->fields->email = (string) $row->email;	
         $content->fields->telefono = (string) $row->phone;
         if ( (string) $row->latitude != '' )
-            $content->fields->geo = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->addressIt;
+            $content->fields->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->addressIt;
         else
-            $content->fields['eng-GB']->geo = 0;
+            $content->fields->gps = 0;
+        $content->fields->tipo_evento = $tipo;
         
         
         $content->addTranslation( 'eng-GB' );
@@ -121,15 +124,55 @@ class CITEventsImportHandler extends SQLIImportAbstractHandler implements ISQLII
         $content->fields['eng-GB']->email = (string) $row->email;	
         $content->fields['eng-GB']->telefono = (string) $row->phone;
         if ( (string) $row->latitude != '' )
-            $content->fields['eng-GB']->geo = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->addressEn;
+            $content->fields['eng-GB']->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->addressEn;
         else
-            $content->fields['eng-GB']->geo = 0;
+            $content->fields['eng-GB']->gps = 0;
+        $content->fields['eng-GB']->tipo_evento = $tipo;
+            
+        $content->addTranslation( 'ger-DE' );
+        $content->fields['ger-DE']->titolo = (string) $row->nameDe;		
+        $content->fields['ger-DE']->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionDe );        
+        $content->fields->image = self::getImage( (string) $row->pictureUrl );        
+        $content->fields['ger-DE']->periodo_svolgimento = (string) $row->eventDateDescriptionDe;	
+        $content->fields['ger-DE']->luogo_svolgimento = (string) $row->addressDe;	        
+        $content->fields['ger-DE']->url = (string) $row->urlPage;	
+        $content->fields['ger-DE']->email = (string) $row->email;	
+        $content->fields['ger-DE']->telefono = (string) $row->phone;
+        if ( (string) $row->latitude != '' )
+            $content->fields['ger-DE']->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->addressDe;
+        else
+            $content->fields['ger-DE']->gps = 0;
+        $content->fields['ger-DE']->tipo_evento = $tipo;
 
         $parentNodeId = $this->handlerConfArray['DefaultParentNodeID'];
         $content->addLocation( SQLILocation::fromNodeID( $parentNodeId ) );
         $publisher = SQLIContentPublisher::getInstance();
         $publisher->publish( $content );
         unset( $content );
+    }
+    
+    protected function getTipo( $it, $en, $de )
+    {
+        $remote_id = 'cit_event_relation_' . md5( $it );
+        $parentNodeId = 752174;
+        
+        $contentOptions = new SQLIContentOptions( array(
+            'class_identifier'      => 'tipo_eventi',
+            'remote_id'				=> $remote_id,
+            'language'              => 'ita-IT'
+        ) );
+        $content = SQLIContent::create( $contentOptions );
+		$content->fields->titolo = $it;
+        $content->addTranslation( 'eng-GB' );		
+		$content->fields['eng-GB']->titolo = $en;
+        $content->addTranslation( 'ger-DE' );		
+		$content->fields['ger-DE']->titolo = $de;
+        $content->addLocation( SQLILocation::fromNodeID( $parentNodeId ) );
+        $publisher = SQLIContentPublisher::getInstance();
+        $publisher->publish( $content );
+        $id = $content->id;
+        unset( $content );
+        return $id;
     }
     
     public static function getImage( $string )

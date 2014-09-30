@@ -96,16 +96,26 @@ class CITItineraryImportHandler extends SQLIImportAbstractHandler implements ISQ
         $content->fields->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionIt ); 
                 
         $content->addTranslation( 'eng-GB' );
-        $content->fields['eng-GB']->titolo = (string) $row->nameIt;		
-        $content->fields['eng-GB']->sottotitolo = (string) $row->subtitleIt;		
+        $content->fields['eng-GB']->titolo = (string) $row->nameEn;		
+        $content->fields['eng-GB']->sottotitolo = (string) $row->subtitleEn;		
         $content->fields['eng-GB']->image = self::getImage( (string) $row->pictureUrl );
         $content->fields['eng-GB']->steps = $this->steps( (string) $row->steps );
         $content->fields['eng-GB']->lunghezza = (string) $row->lengthM;		
         $content->fields['eng-GB']->durata = (string) $row->durationMin;		
         $content->fields['eng-GB']->difficolta = $this->difficolta( (string) $row->difficultyLowMediumHigh );		
-        $content->fields['eng-GB']->info = (string) $row->infoIt;		        
-        $content->fields['eng-GB']->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionIt ); 
+        $content->fields['eng-GB']->info = (string) $row->infoEn;		        
+        $content->fields['eng-GB']->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionEn );
         
+        $content->addTranslation( 'ger-DE' );
+        $content->fields['ger-DE']->titolo = (string) $row->nameDe;		
+        $content->fields['ger-DE']->sottotitolo = (string) $row->subtitleDe;		
+        $content->fields['ger-DE']->image = self::getImage( (string) $row->pictureUrl );
+        $content->fields['ger-DE']->steps = $this->steps( (string) $row->steps );
+        $content->fields['ger-DE']->lunghezza = (string) $row->lengthM;		
+        $content->fields['ger-DE']->durata = (string) $row->durationMin;		
+        $content->fields['ger-DE']->difficolta = $this->difficolta( (string) $row->difficultyLowMediumHigh );		
+        $content->fields['ger-DE']->info = (string) $row->infoDe;		        
+        $content->fields['ger-DE']->descrizione = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionDe );         
 
         $parentNodeId = $this->handlerConfArray['DefaultParentNodeID'];
         $content->addLocation( SQLILocation::fromNodeID( $parentNodeId ) );

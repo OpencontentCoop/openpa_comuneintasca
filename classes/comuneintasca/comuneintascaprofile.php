@@ -69,16 +69,16 @@ class ComuneInTascaProfile
             $this->items[$zoneId] = array();
             foreach( $zoneNode->attribute( 'children' ) as $node )
             {
-                $object = $node->attribute( 'object' );
-                $reference = false;
-                if ( isset( $this->objects[$object->attribute( 'id' )] ) )
-                {
-                    $reference = true;
-                }
-                else
-                {
-                    $this->objects[$object->attribute( 'id' )] = $object->attribute( 'id' );
-                }
+                $object = $node->attribute( 'object' );                
+                $reference = $node->attribute( 'object' )->attribute( 'main_node_id' ) != $node->attribute( 'node_id' );
+                //if ( isset( $this->objects[$object->attribute( 'id' )] ) )
+                //{
+                //    $reference = true;
+                //}
+                //else
+                //{
+                //    $this->objects[$object->attribute( 'id' )] = $object->attribute( 'id' );
+                //}
                 $this->items[$zoneId][] = new ComuneInTascaItem( $object, $reference );
             }
         }

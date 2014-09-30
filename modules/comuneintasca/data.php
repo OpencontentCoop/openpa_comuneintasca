@@ -17,6 +17,7 @@ try
             $data[] = array(
                 'name' => $profile->attribute( 'name' ),
                 'id' => $profile->attribute( 'contentobject_id' ),
+                'dateModified' => $profile->attribute( 'modified_subnode' ),
                 'uri' => $currentUri . '/' . $profile->attribute( 'contentobject_id' )
             );            
         }

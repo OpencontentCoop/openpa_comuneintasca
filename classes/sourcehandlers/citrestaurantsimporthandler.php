@@ -6,6 +6,8 @@ class CITRestaurantsImportHandler extends SQLIImportAbstractHandler implements I
     protected $rowCount;
 
     protected $currentGUID;
+    
+    protected $tipologie = array();
 
     public function __construct( SQLIImportHandlerOptions $options = null )
     {
@@ -92,6 +94,13 @@ class CITRestaurantsImportHandler extends SQLIImportAbstractHandler implements I
         //lastModificationDate
         //status
         
+        $tipologie = explode( ';', (string) $row->classificationsIt );
+        foreach( $tipologie as $tipologia )
+        {
+            $this->tipologie[] = trim( $tipologia );
+        }
+        $tipo = $this->getTipologia( (string) $row->classificationsIt, (string) $row->classificationsEn, (string) $row->classificationsDe );
+        
         $this->currentGUID = $remote_id = $row->id;
 
         $contentOptions = new SQLIContentOptions( array(
@@ -110,7 +119,12 @@ class CITRestaurantsImportHandler extends SQLIImportAbstractHandler implements I
         $content->fields->prezzo_medio_in_euro = (string) $row->pricesIt;
         $content->fields->servizi_offerti = $this->serviziOfferti( $row->equipmentIt, $row->equipmentEn, $row->equipmentDe );
         $content->fields->image = self::getImage( (string) $row->pictureUrl );
-        $content->fields->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionIt );     
+        $content->fields->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionIt );
+        $content->fields->tipo_locale = $tipo;
+        if ( (string) $row->latitude != '' )
+            $content->fields->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->addressIt;
+        else
+            $content->fields->gps = 0;
         
         $content->addTranslation( 'eng-GB' );        
 		$content->fields['eng-GB']->titolo = (string) $row->name;
@@ -122,8 +136,31 @@ class CITRestaurantsImportHandler extends SQLIImportAbstractHandler implements I
         $content->fields['eng-GB']->riposo = (string) $row->closingDaysEn;
         $content->fields['eng-GB']->prezzo_medio_in_euro = (string) $row->pricesEn;
         $content->fields['eng-GB']->servizi_offerti = $this->serviziOfferti( $row->equipmentIt, $row->equipmentEn, $row->equipmentDe );
-        $content->fields->image = self::getImage( (string) $row->pictureUrl );
-        $content->fields->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionEn );
+        $content->fields['eng-GB']->image = self::getImage( (string) $row->pictureUrl );
+        $content->fields['eng-GB']->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionEn );
+        $content->fields['eng-GB']->tipo_locale = $tipo;
+        if ( (string) $row->latitude != '' )
+            $content->fields['eng-GB']->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->addressEn;
+        else
+            $content->fields['eng-GB']->gps = 0;
+        
+        $content->addTranslation( 'ger-DE' );        
+		$content->fields['ger-DE']->titolo = (string) $row->name;
+        $content->fields['ger-DE']->indirizzo = (string) $row->addressDe;
+        $content->fields['ger-DE']->telefono = (string) $row->phone;
+        $content->fields['ger-DE']->url = (string) $row->urlPage;
+        $content->fields['ger-DE']->email = (string) $row->email;
+        $content->fields['ger-DE']->orario = (string) $row->timetableDe;
+        $content->fields['ger-DE']->riposo = (string) $row->closingDaysDe;
+        $content->fields['ger-DE']->prezzo_medio_in_euro = (string) $row->pricesDe;
+        $content->fields['ger-DE']->servizi_offerti = $this->serviziOfferti( $row->equipmentIt, $row->equipmentEn, $row->equipmentDe );
+        $content->fields['ger-DE']->image = self::getImage( (string) $row->pictureUrl );
+        $content->fields['ger-DE']->abstract = SQLIContentUtils::getRichContent( (string) $row->shortDescriptionDe );
+        $content->fields['ger-DE']->tipo_locale = $tipo;
+        if ( (string) $row->latitude != '' )
+            $content->fields['ger-DE']->gps = '1|#' . $row->latitude . '|#' . $row->longitude . '|#' . $row->addressDe;
+        else
+            $content->fields['ger-DE']->gps = 0; 
 				
 
         $parentNodeId = $this->handlerConfArray['DefaultParentNodeID'];
@@ -131,6 +168,88 @@ class CITRestaurantsImportHandler extends SQLIImportAbstractHandler implements I
         $publisher = SQLIContentPublisher::getInstance();
         $publisher->publish( $content );
         unset( $content ); 
+    }
+    
+    protected function getTipologia( $it, $en, $de)
+    {
+        $parentNodeID = 591086;
+        
+        $mapping = array(
+            "Ristorante" => 619627,
+            "Osteria" => false,
+            "Pizzeria" => 619628,
+            "Trattoria" => 619630,
+            "Osteria tipica" => 619631,
+            "Specialità cinese" => false,
+            "Cucina messicana" => false,
+            "Self-service" => 619629,
+            "Wine Bar" => false,
+            "Specialità orientali" => false,
+            "Bar" => false,
+            "Ristorante brasiliano" => false,
+            "Specialità thailandese e cinese" => false,
+            "Specialità giapponese e cinese" => false,
+            "Specialità giapponesi" => false,
+            "Agritur" => 619632,
+            "ristorante" => 619627,
+            "Fast food" => false,
+            "Birreria" => false
+        );
+        
+        $ids = array();
+        $valuesIt = explode( ';', $it );
+        $valuesEn = explode( ';', $en );
+        $valuesDe = explode( ';', $de );
+        foreach( $valuesIt as $index => $value )
+        {
+            $value = trim( $value );
+            $remoteId = 'cit_restauranttype_' . md5( $value );
+            $content = false;
+            if ( array_key_exists( $value, $mapping ) )
+            {
+                if ( $mapping[$value] != false )
+                {
+                    try
+                    {
+                        $content = SQLIContent::fromContentObjectID( $mapping[$value] );
+                    }
+                    catch( Exception $e )
+                    {
+                        $this->cli->error( $mapping[$value] . ' non trovato' );
+                    }
+                }
+            }
+            
+            if ( !$content instanceof SQLIContent )
+            {
+                $contentOptions = new SQLIContentOptions( array(
+                    'class_identifier'      => 'tipo_ristorante',
+                    'remote_id'				=> $remoteId,
+                    'language'              => 'ita-IT'
+                ) );
+                $content = SQLIContent::create( $contentOptions );
+            }
+            
+            $content->fields->titolo = trim( $value );
+            if ( isset( $valuesEn[$index] ) )
+            {
+                $content->addTranslation( 'eng-GB' );
+                $content->fields['eng-GB']->titolo = trim( $valuesEn[$index] );
+            }
+            
+            if ( isset( $valuesDe[$index] ) )
+            {
+                $content->addTranslation( 'ger-DE' );
+                $content->fields['ger-DE']->titolo = trim( $valuesDe[$index] );
+            }
+
+            $content->addLocation( SQLILocation::fromNodeID( $parentNodeID ) );
+            $publisher = SQLIContentPublisher::getInstance();
+            $publisher->publish( $content );
+            $ids[] = $content->id;
+            unset( $content );
+        }
+        return implode( '-', $ids );
     }
     
     public static function getImage( $string )
@@ -143,7 +262,7 @@ class CITRestaurantsImportHandler extends SQLIImportAbstractHandler implements I
         $ids = array();
         $valuesIt = explode( ';', $it );
         $valuesEn = explode( ';', $en );
-        //$valuesDe = explode( ';', $de );
+        $valuesDe = explode( ';', $de );
         foreach( $valuesIt as $index => $value )
         {
             $value = trim( $value );
@@ -153,18 +272,18 @@ class CITRestaurantsImportHandler extends SQLIImportAbstractHandler implements I
                 'language'              => 'ita-IT'
             ) );
             $content = SQLIContent::create( $contentOptions );
-            $content->fields->titolo = $value;
+            $content->fields->titolo = trim( $value );
             if ( isset( $valuesEn[$index] ) )
             {
                 $content->addTranslation( 'eng-GB' );
                 $content->fields['eng-GB']->titolo = trim( $valuesEn[$index] );
             }
             
-            //if ( isset( $valuesDe[$index] ) )
-            //{
-            //    $content->addTranslation( 'eng-GB' );
-            //    $content->fields['eng-GB']->titolo = trim( $valuesDe[$index] );
-            //}
+            if ( isset( $valuesDe[$index] ) )
+            {
+                $content->addTranslation( 'ger-DE' );
+                $content->fields['ger-DE']->titolo = trim( $valuesDe[$index] );
+            }
 
             $content->addLocation( SQLILocation::fromNodeID( 591717 ) );
             $publisher = SQLIContentPublisher::getInstance();
@@ -177,6 +296,7 @@ class CITRestaurantsImportHandler extends SQLIImportAbstractHandler implements I
 
     public function cleanup()
     {
+        $tipologie = array_unique( $this->tipologie );        
         return;
     }
 

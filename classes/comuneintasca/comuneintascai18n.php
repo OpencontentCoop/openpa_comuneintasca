@@ -8,6 +8,15 @@ class ComuneInTascaI18n
         'de' => 'ger-DE'
     );
     
+    public static function fromObject( eZContentObject $object, $asObject = false )
+    {
+        $item = new self();
+        foreach( $item->getLanguageMap() as $key => $language )
+        {
+            $item->{$key} = $object->attribute( 'id' );
+        }
+        return $item;
+    }
     public static function fromAttribute( eZContentObjectAttribute $attribute, $asObject = false )
     {
         $object = $attribute->attribute( 'object' );

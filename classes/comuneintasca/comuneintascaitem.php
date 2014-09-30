@@ -12,12 +12,14 @@ class ComuneInTascaItem
     
     const QUERY_ATTRIBUTE_IDENTIFIER = 'query';
 
+    const APP_CLASS_IDENTIFIER = 'app_comuneintasca';
+
     private $propertiesMap = array(
         'id' => 'getId',
         'name' => 'getName',
         'description' => 'getDescription',
         'image' => 'getImage',
-        'objectIds' => 'getObjectIds',
+        'objectIds' => 'getObjectIds',       
         'query' => 'getQuery',
         'items' => 'getItems'
     );
@@ -94,37 +96,111 @@ class ComuneInTascaItem
     
     protected function getObjectIds()
     {
+        $data = false;
+        $objects = array();
         if ( $attribute = $this->attribute( self::OBJECTIDS_ATTRIBUTE_IDENTIFIER ) ) 
         {            
-            return ComuneInTascaI18n::fromAttribute( $attribute );
+            $data = array();
+            $string = $attribute->toString();
+            if ( !empty( $string ) )
+            {
+                $ids = explode( '-', $string );
+                foreach( $ids as $id )
+                {
+                    $objects[] = eZContentObject::fetch( $id );
+                }
+            }            
         }
-        return false;
+
+        if ( count( $objects ) == 1 )
+        {                        
+            if ( $objects[0] instanceof eZContentObject
+                 && $objects[0]->attribute( 'class_identifier' ) == self::APP_CLASS_IDENTIFIER )
+            {                                
+                $this->app = ComuneInTascaApp::fromObject( $objects[0] );
+                return null;
+            }
+        }
+        
+        foreach( $objects as $object )
+        {            
+            if ( $object instanceof eZContentObject )
+            {
+                $data[] = $object->attribute( 'remote_id' );
+            }
+        }
+       
+        if ( empty( $data ) && !$this->getQuery() && !$this->getItems() )
+        {
+            $data = array( $this->object->attribute( 'remote_id' ) );
+        }
+        return $data;
+    }
+    
+    public static function parseQuery( $queryString, $asObject = true )
+    {
+        $parts = explode( '::', $queryString );
+        if ( $asObject )
+            $query = new stdClass();
+        else
+            $query = array();
+        
+        if ( $asObject )
+            $query->type = isset( $parts[0] ) ? $parts[0] : null;
+        else
+        {
+            $class = null;
+            if ( isset( $parts[0] ) )
+            {
+                $classObject =  eZContentClass::fetchByIdentifier( $parts[0] );
+                if ( $classObject instanceof eZContentClass )
+                {
+                    $class = $classObject->attribute( 'name' );
+                }
+            }
+            $query['type'] = $class;
+        }
+            
+        $classifications = null;
+        if ( isset( $parts[1] ) )
+        {
+            $classifications = array();
+            $subParts = explode( ';', $parts[1] );
+            foreach( $subParts as $subPart )
+            {
+                $subSubPart = explode( '=', $subPart );
+                $classifications[] = array( $subSubPart[0] => $subSubPart[1] );
+            }            
+        }
+        
+        if ( $asObject )
+            $query->classifications = $classifications;
+        elseif ( $classObject instanceof eZContentClass )
+        {
+            $dataMap = $classObject->attribute( 'data_map' );
+            $_classifications = array();            
+            foreach( $classifications as $item )
+            {
+                foreach( $item as $identifier => $classification )
+                {
+                    if ( isset( $dataMap[$identifier] ) )
+                    {
+                        $_classifications[$dataMap[$identifier]->attribute( 'name' )] = $classification;
+                    }
+                }
+            }
+            $query['classifications'] = $_classifications;
+        }
+        
+        return $query;
     }
     
     // esempio event::materia=Arte;tipologia=Evento Singolo
     protected function getQuery()
     {  
         if ( $attribute = $this->attribute( self::QUERY_ATTRIBUTE_IDENTIFIER ) ) 
-        {            
-            $parts = explode( '::', $attribute->toString() );
-            $query = new stdClass();
-            $query->type = isset( $parts[0] ) ? $parts[0] : null;
-            if ( isset( $parts[1] ) )
-            {
-                $classifications = array();
-                $subParts = explode( ';', $parts[1] );
-                foreach( $subParts as $subPart )
-                {
-                    $subSubPart = explode( '=', $subPart );
-                    $classifications[] = array( $subSubPart[0] => $subSubPart[1] );
-                }
-                $query->classifications = $classifications;
-            }
-            else
-            {
-                $query->classifications = null;   
-            }            
-            return $query;
+        {                        
+            return self::parseQuery( $attribute->toString() );
         }
         return false;
     }

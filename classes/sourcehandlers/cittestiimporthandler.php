@@ -55,7 +55,7 @@ class CITTestiImportHandler extends SQLIImportAbstractHandler implements ISQLIIm
 
     public function process( $row )
     {        
-        
+
         //id
         //mainLocale
         //categoryName
@@ -90,6 +90,9 @@ class CITTestiImportHandler extends SQLIImportAbstractHandler implements ISQLIIm
 		$content->fields->image = self::getImage( (string) $row->pictureUrl );
 		$content->fields->abstract = strip_tags( (string) $row->shortDescriptionIt );		
 		$content->fields->description = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionIt );			
+		$content->fields->classifications = trim( $row->classifications );			
+		$content->fields->address = trim( $row->address );
+        $content->fields->info = SQLIContentUtils::getRichContent( (string) $row->infoIt );
 
         
         $content->addTranslation( 'eng-GB' );
@@ -97,7 +100,20 @@ class CITTestiImportHandler extends SQLIImportAbstractHandler implements ISQLIIm
 		$content->fields['eng-GB']->tooltip = (string) $row->address;				
 		$content->fields['eng-GB']->image = self::getImage( (string) $row->pictureUrl );
 		$content->fields['eng-GB']->abstract = strip_tags( (string) $row->shortDescriptionEn );		
-		$content->fields['eng-GB']->description = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionEn );			
+		$content->fields['eng-GB']->description = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionEn );
+        $content->fields['eng-GB']->classifications = trim( $row->classifications );			
+		$content->fields['eng-GB']->address = trim( $row->address );
+        $content->fields['eng-GB']->info = SQLIContentUtils::getRichContent( (string) $row->infoEn );
+        
+        $content->addTranslation( 'ger-DE' );
+        $content->fields['ger-DE']->title = (string) $row->nameDe;		
+        $content->fields['ger-DE']->tooltip = (string) $row->address;				
+        $content->fields['ger-DE']->image = self::getImage( (string) $row->pictureUrl );
+        $content->fields['ger-DE']->abstract = strip_tags( (string) $row->shortDescriptionDe );		
+        $content->fields['ger-DE']->description = SQLIContentUtils::getRichContent( (string) $row->htmlDescriptionDe );
+        $content->fields['ger-DE']->classifications = trim( $row->classifications );			
+        $content->fields['ger-DE']->address = trim( $row->address );
+        $content->fields['ger-DE']->info = SQLIContentUtils::getRichContent( (string) $row->infoDe );
 
         $parentNodeId = $this->handlerConfArray['DefaultParentNodeID'];
         $content->addLocation( SQLILocation::fromNodeID( $parentNodeId ) );

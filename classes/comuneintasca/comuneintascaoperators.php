@@ -10,10 +10,14 @@ class ComuneInTascaOperators
     function operatorList()
     {
         return array(
+            'apps_root',
             'comune_in_tasca_root',
             'comune_in_tasca_profiles',
             'menuitem_class_identifier',
             'zone_class_identifier',
+            'parse_item_query',
+            'class_list',
+            'attribute_list'
         );
     }
 
@@ -54,6 +58,11 @@ class ComuneInTascaOperators
         $handler = ComuneInTascaHelper::instance();
         switch( $operatorName )
         {
+            case 'apps_root':
+                $appsHelper = AppSectionHelper::instance();
+                $operatorValue = $appsHelper->rootNode();
+                break;
+            
             case 'comune_in_tasca_root':
                 $operatorValue = $handler->rootNode( false );
                 break;
@@ -69,6 +78,84 @@ class ComuneInTascaOperators
             case 'zone_class_identifier':
                 $operatorValue = ComuneInTascaHelper::ZONE_CLASSIDENTIFIER;
                 break;
+            
+            case 'parse_item_query':
+                $operatorValue = ComuneInTascaItem::parseQuery( $operatorValue, false );
+                break;
+            
+            case 'class_list':                
+                $operatorValue = $this->comuneInTascaClasses();
+                break;
+            
+            case 'attribute_list':                
+                $operatorValue = $this->comuneInTascaAttributesByClass( $operatorValue );
+                break;
         }        
+    }
+    
+    function comuneInTascaAttributesByClass( $classIdentifier )
+    {
+        $data = array();
+        
+        switch( $classIdentifier )
+        {
+            case 'ristorante':
+                $data['tipo_locale'] = "Tipo di locale";
+                break;
+            
+            case 'event':
+                $data['tipo_evento'] = "Tipologia";
+                break;
+                
+            case 'luogo':
+                $data['tipo_luogo'] = "Tipologia di luogo";
+                break;
+            
+            case 'accomodation':
+                $data['tipologia_hotel'] = "Tipologia di alloggio";
+                break;
+            
+            case 'iniziativa':
+                $data['tipo_evento'] = "Tipologia";
+                break;
+            
+            case 'testo_generico':
+                $data['classifications'] = "Parole chiave";
+                break;
+        }
+        
+        //$class = eZContentClass::fetchByIdentifier( $classIdentifier );
+        //if ( $class instanceof eZContentClass )
+        //{
+        //    foreach( $class->attribute( 'data_map' ) as $attribute )
+        //    {
+        //        switch ( $attribute->attribute( 'data_type_string' ) )
+        //        {
+        //            case 'ezobjectrelationlist':
+        //                $data[$attribute->attribute( 'identifier' )] = $attribute->attribute( 'name' );
+        //                break;
+        //            
+        //            default:
+        //                break;
+        //        }
+        //    }
+        //}
+        return $data;
+    }
+    
+    function comuneInTascaClasses()
+    {
+        $list = eZContentClassClassGroup::fetchClassList( null, 15 );
+        $data = array();
+        foreach( $list as $class )
+        {
+            if ( strpos( $class->attribute( 'identifier' ), '_comuneintasca' ) === false
+                 && strpos( $class->attribute( 'identifier' ), 'tipologia' ) === false
+                 && 'apps_container' != $class->attribute( 'identifier' ) )
+            {
+                $data[$class->attribute( 'identifier' )] = $class->attribute( 'name' );
+            }
+        }
+        return $data;
     }
 }

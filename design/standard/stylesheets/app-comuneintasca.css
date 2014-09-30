@@ -1,0 +1,113 @@
+.app-container{
+    width: 900px;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-bottom: 50px;
+    height: 600px;
+}
+
+.app-container .app-left{
+    width: 500px;
+    float: left;
+    height: 600px;
+}
+
+.app-container .app-right{
+    width: 400px;
+    float: left;    
+}
+
+.app-container .app-left .carousel{
+    position: relative;
+}
+
+#add-carousel{
+    position: absolute;
+    left: 0;
+    top: 25px;
+}
+
+#sort-carousel{
+    position: absolute;
+    left: 0;
+    top: 55px;
+}
+
+.add-item{
+    background: none repeat scroll 0 0 #f00;
+    color: #fff !important;    
+    font-weight: bold;
+    padding: 5px;
+    font-size: 13px
+}
+
+.sort-item{
+    background: none repeat scroll 0 0 #556B2F;
+    color: #fff !important;    
+    font-weight: bold;
+    padding: 5px;
+    font-size: 13px
+}
+
+
+.owl-carousel .item-title{
+    background: #ddd;
+    margin: 0 auto;
+}
+
+.owl-carousel .item-title h3{
+    padding: 7px 10px;
+}
+
+.app-buttons h3.button,
+ul.app-menu li div.menu-item{
+    border: 2px solid #ddd;
+    float: left;
+    font-size: 13px;    
+    margin: 10px 10px 0 0;
+    overflow: hidden;
+    padding: 5px;
+    width: 220px;
+    background: #eee;
+}
+
+ul.app-menu{
+    padding: 10px;
+    margin: 0;
+}
+
+ul.app-menu ul{
+    margin: 0 0 0 20px;
+}
+
+ul.app-menu li{
+    background: none;
+    padding: 0;
+}
+
+ul.app-menu li div.menu-item{
+    width: 90%;
+    float: none;
+}
+
+ul.app-menu li div.menu-item a{
+    font-size: 13px;
+    font-weight: bold;
+}
+
+small.zone{
+    font-weight: bold;    
+    padding: 5px;
+    font-size: 12px;
+    background: #000;
+    color: #fff;
+}
+
+.app-left .buttons{
+    margin-top: 30px;
+}
+
+.app-right ul.app-menu{
+    height: 600px;    
+    overflow-y: auto;
+}
