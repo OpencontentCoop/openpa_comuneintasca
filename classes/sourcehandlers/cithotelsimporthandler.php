@@ -143,7 +143,7 @@ class CITHotelsImportHandler extends SQLIImportAbstractHandler implements ISQLII
     protected function getTipoHotel( $it, $en, $de )
     {
         $remote_id = 'cit_relation_' . md5( $it );
-        $parentNodeId = 754642;
+        $parentNodeId = 870387;
         
         $contentOptions = new SQLIContentOptions( array(
             'class_identifier'      => 'tipologia_di_struttura_ricettiva',

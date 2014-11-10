@@ -90,31 +90,27 @@ class CITCulturaImportHandler extends SQLIImportAbstractHandler implements ISQLI
             $tipoLuogo = null;
             if ( $row->classificationsIt == 'Chiese' )
             {
-                $tipoLuogo = '775485';    
+                $tipoLuogo = '884657';    
             }
             elseif ( $row->classificationsIt == 'Edifici storici' )
             {
-                $tipoLuogo = '775486';    
+                $tipoLuogo = '884656';    
             }
             elseif ( $row->classificationsIt == 'Aree Archeologiche' )
             {
-                $tipoLuogo = '775487';    
+                $tipoLuogo = '884655';    
             }
             elseif ( $row->classificationsIt == 'Altri siti di interesse storico artistico' )
             {
-                $tipoLuogo = '775488';    
+                $tipoLuogo = '884654';    
             }
             elseif ( $row->classificationsIt == 'Natura' )
             {
-                $tipoLuogo = '775489';    
-            }
-            elseif ( $row->classificationsIt == 'Natura' )
-            {
-                $tipoLuogo = '775489';    
+                $tipoLuogo = '884653';    
             }
             elseif ( $row->classificationsIt == 'Musei' )
             {
-                $tipoLuogo = '776927';    
+                $tipoLuogo = '884652';    
             }
             
             // Luoghi

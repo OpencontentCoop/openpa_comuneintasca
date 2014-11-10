@@ -105,6 +105,7 @@ class ComuneInTascaOperators
             
             case 'event':
                 $data['tipo_evento'] = "Tipologia";
+                $data['tipo_eventi_manifestazioni'] = "Evento - manifestazione";
                 break;
                 
             case 'luogo':
@@ -119,7 +120,7 @@ class ComuneInTascaOperators
                 $data['tipo_evento'] = "Tipologia";
                 break;
             
-            case 'testo_generico':
+            case 'folder':
                 $data['classifications'] = "Parole chiave";
                 break;
         }

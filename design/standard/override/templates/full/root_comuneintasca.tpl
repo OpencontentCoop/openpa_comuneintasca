@@ -19,7 +19,7 @@
 	{/foreach}
 	</ul>
 	
-	<h2>Contenuti temporanei</h2>
+	{*<h2>Contenuti temporanei</h2>
 	<ul>
 	{foreach fetch( content, list, hash( parent_node_id, $node.node_id,
 										 class_filter_type, include,
@@ -28,7 +28,7 @@
 		<a href={$item.url_alias|ezurl()} title="{$item.name|wash()}">{$item.name|wash()}</a>	  
 	  </li>
 	{/foreach}
-	</ul>
+	</ul>*}
   	
  </div>
 </div>

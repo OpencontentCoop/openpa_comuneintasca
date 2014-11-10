@@ -154,7 +154,7 @@ class CITEventsImportHandler extends SQLIImportAbstractHandler implements ISQLII
     protected function getTipo( $it, $en, $de )
     {
         $remote_id = 'cit_event_relation_' . md5( $it );
-        $parentNodeId = 752174;
+        $parentNodeId = 816670;
         
         $contentOptions = new SQLIContentOptions( array(
             'class_identifier'      => 'tipo_eventi',
