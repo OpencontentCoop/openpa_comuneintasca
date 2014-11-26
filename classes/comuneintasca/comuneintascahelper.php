@@ -31,7 +31,7 @@ class ComuneInTascaHelper
     
     public function rootNode( $createIfNotExists = true )
     {        
-        $appSectionHelper = AppSectionHelper::instance();
+        $appSectionHelper = OpenPAAppSectionHelper::instance();
         if ( $this->rootNode === null )
         {
             $params = array( 'Depth' => 1,
@@ -75,12 +75,12 @@ class ComuneInTascaHelper
             $section = new eZSection( array() );
             $section->setAttribute( 'name', "Comune in Tasca" );
             $section->setAttribute( 'identifier', "comuneintasca" );
-            $section->setAttribute( 'navigation_part_identifier', AppSectionHelper::NAVIGATION_IDENTIFIER );
+            $section->setAttribute( 'navigation_part_identifier', OpenPAAppSectionHelper::NAVIGATION_IDENTIFIER );
             $section->store();
         }
         
         $params = array(
-            'parent_node_id' => AppSectionHelper::rootNode()->attribute( 'node_id' ),
+            'parent_node_id' => OpenPAAppSectionHelper::rootNode()->attribute( 'node_id' ),
             'section_id' => $section->attribute( 'id' ),
             'class_identifier' => self::ROOT_CLASSIDENTIFIER,
             'attributes' => array(

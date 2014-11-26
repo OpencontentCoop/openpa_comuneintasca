@@ -10,7 +10,6 @@ class ComuneInTascaOperators
     function operatorList()
     {
         return array(
-            'apps_root',
             'comune_in_tasca_root',
             'comune_in_tasca_profiles',
             'menuitem_class_identifier',
@@ -58,11 +57,6 @@ class ComuneInTascaOperators
         $handler = ComuneInTascaHelper::instance();
         switch( $operatorName )
         {
-            case 'apps_root':
-                $appsHelper = AppSectionHelper::instance();
-                $operatorValue = $appsHelper->rootNode();
-                break;
-            
             case 'comune_in_tasca_root':
                 $operatorValue = $handler->rootNode( false );
                 break;

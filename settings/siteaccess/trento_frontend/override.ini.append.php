@@ -1,11 +1,5 @@
 <?php /* #?ini charset="utf-8"?
 
-[full_apps_container]
-Source=node/view/full.tpl
-MatchFile=full/apps_container.tpl
-Subdir=templates
-Match[class_identifier]=apps_container
-
 [full_profilo_comuneintasca]
 Source=node/view/full.tpl
 MatchFile=full/profilo_comuneintasca.tpl

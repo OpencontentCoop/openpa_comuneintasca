@@ -2,7 +2,6 @@
 
 [ModuleSettings]
 ExtensionRepositories[]=openpa_comuneintasca
-ModuleList[]=apps
 ModuleList[]=comuneintasca
 
 */ ?>
