@@ -108,6 +108,15 @@ class ComuneInTascaHelper
                 $profile = new ComuneInTascaProfile( $object );
                 $profile->checkZones();
             }
+            $dataMap = $object->attribute( 'data_map' );
+            foreach( $dataMap as $attribute )
+            {
+                if ( $attribute->attribute( 'data_type_string' ) == 'ezimage' )
+                {
+                    $imageHandler = new eZImageAliasHandler( $attribute );
+                    $imageHandler->imageAlias( 'medium' );
+                }
+            }
         }
     }
     
